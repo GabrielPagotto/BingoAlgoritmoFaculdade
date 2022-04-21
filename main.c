@@ -1,7 +1,15 @@
-#include <stdio.h>
-#include "projeto_bingo/sistema.h"
+//
+//  main.c
+//  ProjetoBingo
+//
 
-int main() {
+#include <stdio.h>
+
+#include "projeto_bingo/sistema.h"
+#include "projeto_bingo/rotas.h"
+
+int main()
+{
     rodarSistema();
     return 1;
 }

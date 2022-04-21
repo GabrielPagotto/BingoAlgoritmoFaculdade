@@ -1,14 +1,26 @@
-#ifndef _MODELOS_H
-#define _MODELOS_H
+//
+//  modelos.h
+//  ProjetoBingo
+//
+
+#ifndef modelos_h
+#define modelos_h
 
 #include <stdio.h>
 
-// Modelo do participante.
-struct Participante {
-    char nome[16];
-    char sobrenome[32];
-    char numTelefone[15];
-    char numDocumento[15]; 
+struct Participante
+{
+    int codigo;
+    char *nome;
+    char *sobrenome;
+    char *numeroTelefone;
+    char *numeroDocumento;
 };
 
-#endif
+struct Premio
+{   
+    int codigo;
+    char *desricao;   
+};
+
+#endif /* modelos_h */

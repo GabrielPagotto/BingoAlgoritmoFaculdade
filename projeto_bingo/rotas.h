@@ -1,55 +1,57 @@
-#ifndef _ROTAS_H
-#define _ROTAS_H
+//
+//  rotas.h
+//  ProjetoBingo
+//
+
+#ifndef rotas_h
+#define rotas_h
 
 #include <stdio.h>
 
-// Rotas existentes no sistema.
-// Toda nova rota que for adicionada ao sistema deverá ser gravada neste Struct.
-// Ao adicionar a rota no Struct deve ser dados um número valor não existente para a mesma no método [gerarValoresDasRotas].
-typedef struct {
-    int menu;
-    int cadParticipante;
-    int listarParticipantes;
-    int cadPremios;
-    int cadNumeros;
-} Rotas;
-
-// Será adicionado valores padrões que não poderam ser auterados posteriormente.
-// Cada rota deve possuir um valor único, pois esse valor é usado como identificador nas telas.
-// Setar somente número inteiros.
-// O valor 999 não pode ser usado, pois o mesmo já usado para finalizar o sistema.
-// A rota menu sempre deve ser o número 0, pois está sendo chamada no inicio da aplicação.
-const Rotas gerarValoresDasRotas() {
-    Rotas rotas;
-
-    rotas.menu = 0;
-    rotas.cadParticipante = 1;
-    rotas.listarParticipantes = 2;
-    rotas.cadPremios = 3;
-    rotas.cadNumeros = 4;
-
-    return rotas;
-}
+typedef enum
+{
+    ROTA_MENU = 0,
+    ROTA_CADASTRAR_PARTICIPANTE = 1,
+    ROTA_LISTAR_PARTICIPANTE = 2,
+    ROTA_CADASTRAR_PREMIO = 3,
+    ROTA_LISTAR_PREMIOS = 4,
+    ROTA_CADASTRAR_NUMERO = 5,
+    ROTA_FINALIZAR = 999
+} Rota;
 
 #include "telas.h"
 
-// Método que selecionará a rota responsável por selecionar a view que será exibida.
-// Toda view deverá retornar um número inteiro, que será o número valor da próxima view a ser exibida.
-// Por padrão o primeiro valor de rota será 0.
-// A rota padrão será a view inicial, que no caso será o menu.
-int getRoute(int proximaRota) {   
-    Rotas rotas = gerarValoresDasRotas();
+Rota rotaCtl(Rota proximaRota)
+{
+    Rota sw;
 
-    if (rotas.menu == proximaRota)
-        return menuTela(rotas);
+    switch (proximaRota)
+    {
+    case ROTA_MENU:
+        sw = menuTela();
+        break;
+
+    case ROTA_CADASTRAR_PARTICIPANTE:
+        sw = cadastroParticipanteTela();
+        break;
+
+    case ROTA_LISTAR_PARTICIPANTE:
+        sw = listarParticipantesTela();
+        break;
+
+    case ROTA_CADASTRAR_PREMIO:
+        sw = cadastrarPremiosTela();
+        break;
+
+    case ROTA_LISTAR_PREMIOS:
+        sw = listarPremiosTela();
+        break;
     
-    if (rotas.cadParticipante == proximaRota)
-        return cadParticipanteTela(rotas);
-
-    if (rotas.listarParticipantes)
-        return listarParticipantes(rotas);
-
-    return rotas.menu;
+    default:
+        sw = menuTela();
+        break;
+    }
+    return sw;
 }
 
-#endif
+#endif /* rotas_h */

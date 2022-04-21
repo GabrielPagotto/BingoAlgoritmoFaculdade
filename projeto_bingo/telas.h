@@ -1,81 +1,98 @@
-#ifndef _TELAS_H
-#define _TELAS_H
+//
+//  telas.h
+//  ProjetoBingo
+//
+
+#ifndef telas_h
+#define telas_h
 
 #include <stdio.h>
+#include <stdbool.h>
 
-#include "utilitarios.h"
-#include "modelos.h"
 #include "rotas.h"
+#include "utilitarios.h"
+#include "globais.h"
 
-// Tela responsável por mostrar as funções disponíveis no sistema.
-int menuTela(Rotas rotas) {
-    char sel;
-    int proxRota = 0;
-    
+Rota menuTela() {
     exibirCabecalho("MENU");
-    exibirOpc('0', "Voltar ao menu");
-    exibirOpc('1', "Cadastrar participante");
-    exibirOpc('2', "Listar Participantes");
-    exibirOpc('3', "Cadastrar premios");
-    exibirOpc('4', "Cadastrar intervalo de números sorteados");
-    sel = pegarOpcSelecionada();
-    printf("%d", sel);
-
-    switch (sel) {
-        case '0':
-            proxRota = rotas.menu;
-            break;
-        case '1':
-            proxRota = rotas.cadParticipante;
-            break;
-        case '2':
-            proxRota = rotas.cadPremios;
-            break;
-        case '3':
-            proxRota = rotas.cadNumeros;
-        default:
-            break;
-    }
-
+    exibirOpcao(ROTA_CADASTRAR_PARTICIPANTE, "Cadastrar participante");
+    exibirOpcao(ROTA_LISTAR_PARTICIPANTE, "Listar Participantes");
+    exibirOpcao(ROTA_CADASTRAR_PREMIO, "Cadastrar prêmios");
+    exibirOpcao(ROTA_LISTAR_PREMIOS, "Listar prêmios");
+    exibirOpcao(ROTA_FINALIZAR, "Fechar");
+    int proxRota = pegarOpcSelecionada();
     return proxRota;
 }
 
-// Tela responsável por realizar o cadastro de um participante.
-int cadParticipanteTela(Rotas rotas) {   
-    struct Participante prtcpt;
+#include "modelos.h"
 
+Rota cadastroParticipanteTela()
+{
+    struct Participante prtc;
     exibirCabecalho("CADASTRAR PARTICIPANTE");
-    printf_s("  Informe abaixo os dados do participante\n");
-
-    printf("    Nome: ");
-    scanf(" %[^\n]", prtcpt.nome);
-
-
-    printf("    Sobrenome: ");
-    scanf(" %[^\n]", prtcpt.sobrenome);
-
-    printf("    Num. Telefone: ");
-    scanf(" %[^\n]", prtcpt.numTelefone);
-
-    printf("    Num. Documento: ");
-    scanf(" %[^\n]", prtcpt.numDocumento);
-
-
-    adicionarParticipante(&prtcpt);
-
-    return rotas.menu;
+    pegarLinha("");
+    prtc.nome = pegarLinha("Informe o nome do participante: ");
+    prtc.sobrenome = pegarLinha("Informe o sobrenome do participante: ");
+    prtc.numeroTelefone = pegarLinha("Informe o número de telefone do participante: ");
+    prtc.numeroDocumento = pegarLinha("Informe o número de documento do participante: ");
+    char *res;
+    bool prtcAdicionado = adicionarParticipante(prtc);
+    if (prtcAdicionado)
+    {
+        res = "Participante adicionado com sucesso";
+    }
+    else
+    {
+        res = "Ocorreu um erro ao adicionar o participante";
+    }
+    mostrarMensagem(res);
+    return ROTA_MENU;
 }
 
-int listarParticipantes(Rotas rotas) {
-    exibirCabecalho("PARTICIPANTES CADASTRADOS");
-    char close;
-
-    pegarTodosParticipantes();
-
-    printf("    APERTE ENTER PARA FECHAR: ");
-    scanf("%s", &close);
-    
-    return rotas.menu;
+Rota listarParticipantesTela()
+{
+    exibirCabecalho("LISTA DE PARTICIPANTES");
+    struct Participante *prtcs;
+    prtcs = pegarTodosParticipantes();
+    for (int i = 0; i < PARTICIPANTES_ARRAY_SIZE; i++)
+    {
+        mostrarParticipante(prtcs[i]);
+    }
+    mostrarMensagem("Todos os participantes foram listados");
+    return ROTA_MENU;
 }
 
-#endif
+Rota cadastrarPremiosTela()
+{
+    exibirCabecalho("LISTA DE PARTICIPANTES");
+    struct Premio prm;
+    pegarLinha("");
+    prm.desricao = pegarLinha("Informe uma descrição para o prêmio: ");
+    char *res;
+    bool premioAdicionado = adicionarPremio(prm);
+    if (premioAdicionado)
+    {
+        res = "Prêmio adicionado com sucesso";
+    }
+    else 
+    {
+        res = "Ocorreu um erro ao adicionar o prêmio";
+    }
+    mostrarMensagem(res);
+    return ROTA_MENU;
+}
+
+Rota listarPremiosTela()
+{
+    exibirCabecalho("LISTA DE PRÊMIOS");
+    struct Premio *premios;
+    premios = pegarTodosPremios();
+    for (int i = 0; i < PREMIOS_ARRAY_SIZE; i++)
+    {
+        mostrarPremio(premios[i]);
+    }
+    mostrarMensagem("Todos os prêmios foram listados");
+    return ROTA_MENU;
+}
+
+#endif /* telas_h */
