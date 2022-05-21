@@ -13,7 +13,6 @@
 
 #include "modelos.h" 
 #include "constantes.h"
-#include "globais.h"
 
 int mostrar_mensagem(char *mensagem) {
     printf("\n\n  %s.\n", mensagem); 
@@ -86,20 +85,24 @@ char *pegar_linha(char *msg)
     return linha;
 }
 
-Participante *pegar_todos_participantes() {
-    Participante prtc;
+Participante *pegar_todos_participantes(int *array_size) {
     Participante *prtcs;
+    Participante prtc;
     FILE *arqv;
+
+    prtcs = malloc(sizeof(Participante) * 2);
     arqv = fopen(PARTICIPANTES_ARQV, "r");
-    prtcs = malloc(sizeof(Participante) * 200);
+    *array_size = 0;
 
     if (arqv == NULL)
         return prtcs;
 
-    for (int i = 0; fread(&prtcs[i], sizeof(Participante), 1, arqv); i++) {
-        // mostrarParticipante(prtc);
-        // prtcs[i] = prtc;
-        // prtcs = realloc(prtcs, sizeof(Participante) * i + 2);
+    for (int i = 0; fread(&prtc, sizeof(Participante), 1, arqv); i++) {
+        int size = i + 1;
+
+        prtcs[i] = prtc;
+        prtcs = realloc(prtcs, sizeof(Participante) * (size + 1));
+        *array_size = size;
     }
 
     fclose(arqv);
@@ -107,13 +110,15 @@ Participante *pegar_todos_participantes() {
 }
 
 bool adicionar_participante(Participante prtc) {
+    int array_size;
     Participante *tods_prtcs;
-    tods_prtcs = pegar_todos_participantes();
+    tods_prtcs = pegar_todos_participantes(&array_size);
     prtc.codigo = 1;
 
-    for (int i = 0; i < sizeof(*tods_prtcs) / sizeof(Participante); i++)
-        if (tods_prtcs[i].codigo >= prtc.codigo)
-            prtc.codigo = tods_prtcs[i].codigo + 1;
+    if (array_size > 0)
+        for (int i = 0; i < array_size; i++)
+            if (tods_prtcs[i].codigo >= prtc.codigo)
+                prtc.codigo = tods_prtcs[i].codigo + 1;
 
     FILE *arqv;
     arqv = fopen(PARTICIPANTES_ARQV, "a");
@@ -124,11 +129,9 @@ bool adicionar_participante(Participante prtc) {
     fwrite(&prtc, sizeof(Participante), 1, arqv);
 
     if (*fwrite != 0) {
-        printf("Certo");
         fclose(arqv);
         return true;
     } else {
-        printf("Errado");
         fclose(arqv);
         return false;
     }
@@ -142,19 +145,24 @@ void mostrar_premio(Premio premio) {
     fflush(stdout);
 }
 
-Premio *pegar_todos_premios() {
+Premio *pegar_todos_premios(int *array_size) {
     Premio premio;
     Premio *premios;
     FILE *arqv;
+
     arqv = fopen(PREMIOS_ARQV, "rb+");
-    premios = malloc(sizeof premio);
+    premios = malloc(sizeof(Premio) * 2);
+    *array_size = 0;
 
     if (arqv == NULL)
         return premios;
 
-    for (int i = 0; fread(&premio, sizeof(premio), 1, arqv); i++) {
-        premios = realloc(premios, (i + 2) * sizeof(premio));
+    for (int i = 0; fread(&premio, sizeof(Premio), 1, arqv); i++) {
+        int size = i + 1;
+
         premios[i] = premio;
+        premios = realloc(premios, sizeof(Premio) * (size + 1));
+        *array_size = size;
     }
     
     fclose(arqv);
@@ -162,13 +170,15 @@ Premio *pegar_todos_premios() {
 }
 
 bool adicionar_premio(Premio premio) {
+    int array_size;
     Premio *tods_premios;
-    tods_premios = pegar_todos_premios();
+    tods_premios = pegar_todos_premios(&array_size);
     premio.codigo = 1;
     
-    for (int i = 0; i < sizeof(*tods_premios) / sizeof(Premio); i++)
-        if (tods_premios[i].codigo >= premio.codigo)
-            premio.codigo = tods_premios[i].codigo + 1;
+    if (array_size > 0)
+        for (int i = 0; i < array_size; i++)
+            if (tods_premios[i].codigo >= premio.codigo)
+                premio.codigo = tods_premios[i].codigo + 1;
 
     FILE *arqv;
     arqv = fopen(PREMIOS_ARQV, "a");

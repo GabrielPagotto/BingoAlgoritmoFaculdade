@@ -11,7 +11,6 @@
 
 #include "rotas.h"
 #include "utilitarios.h"
-#include "globais.h"
 
 Rota menu_tela() {
     exibir_cabecalho("MENU");
@@ -49,26 +48,22 @@ Rota cadastro_participante_tela() {
     return ROTA_MENU;
 }
 
-Rota listar_participantes_tela()
-{
-    exibir_cabecalho("LISTA DE PARTICIPANTES");
+Rota listar_participantes_tela() {
     Participante *prtcs;
-    prtcs = pegar_todos_participantes();
+    int array_size;
 
-    ssize_t prtcsSize = sizeof(*prtcs);
+    prtcs = pegar_todos_participantes(&array_size);
+    exibir_cabecalho("LISTA DE PARTICIPANTES");
 
-    printf("%d", (int) sizeof(prtcs));
-
-    for (int i = 0; i < (sizeof(*prtcs) / sizeof(Participante)); i++)
+    for (int i = 0; i < array_size; i++)
         mostrar_participante(prtcs[i]);
 
     mostrar_mensagem("Todos os participantes listados");
     return ROTA_MENU;
 }
 
-Rota cadastrar_premios_tela()
-{
-    exibir_cabecalho("LISTA DE PRÊMIOS");
+Rota cadastrar_premios_tela() {
+    exibir_cabecalho("CADASTRAR PRÊMIO");
     Premio prm;
     pegar_linha("");
     strcpy(prm.desricao, pegar_linha("Informe uma descrição para o prêmio: "));
@@ -86,13 +81,13 @@ Rota cadastrar_premios_tela()
     return ROTA_MENU;
 }
 
-Rota listar_premios_tela()
-{
-    exibir_cabecalho("LISTA DE PRÊMIOS");
+Rota listar_premios_tela() {
+    int array_size;
     Premio *premios;
-    premios = pegar_todos_premios();
+    premios = pegar_todos_premios(&array_size);
+    exibir_cabecalho("LISTA DE PRÊMIOS");
 
-    for (int i = 0; i < (sizeof(*premios) / sizeof(Premio)); i++)
+    for (int i = 0; i < array_size; i++)
         mostrar_premio(premios[i]);
         
     mostrar_mensagem("Todos os prêmios listados");
