@@ -13,85 +13,85 @@
 #include "utilitarios.h"
 #include "globais.h"
 
-Rota menuTela() {
-    exibirCabecalho("MENU");
-    exibirOpcao(ROTA_CADASTRAR_PARTICIPANTE, "Cadastrar participante");
-    exibirOpcao(ROTA_LISTAR_PARTICIPANTE, "Listar Participantes");
-    exibirOpcao(ROTA_CADASTRAR_PREMIO, "Cadastrar prêmios");
-    exibirOpcao(ROTA_LISTAR_PREMIOS, "Listar prêmios");
-    exibirOpcao(ROTA_FINALIZAR, "Fechar");
-    int proxRota = pegarOpcSelecionada();
+Rota menu_tela() {
+    exibir_cabecalho("MENU");
+    exibir_opcao(ROTA_CADASTRAR_PARTICIPANTE, "Cadastrar participante");
+    exibir_opcao(ROTA_LISTAR_PARTICIPANTE, "Listar Participantes");
+    exibir_opcao(ROTA_CADASTRAR_PREMIO, "Cadastrar prêmios");
+    exibir_opcao(ROTA_LISTAR_PREMIOS, "Listar prêmios");
+    exibir_opcao(ROTA_FINALIZAR, "Fechar");
+    int proxRota = pegar_opc_selecionada();
     return proxRota;
 }
 
 #include "modelos.h"
 
-Rota cadastroParticipanteTela()
-{
+Rota cadastro_participante_tela() {
     struct Participante prtc;
-    exibirCabecalho("CADASTRAR PARTICIPANTE");
-    pegarLinha("");
-    prtc.nome = pegarLinha("Informe o nome do participante: ");
-    prtc.sobrenome = pegarLinha("Informe o sobrenome do participante: ");
-    prtc.numeroTelefone = pegarLinha("Informe o número de telefone do participante: ");
-    prtc.numeroDocumento = pegarLinha("Informe o número de documento do participante: ");
+    exibir_cabecalho("CADASTRAR PARTICIPANTE");
+    pegar_linha("");
+
+    strcpy(prtc.nome, pegar_linha("Informe o nome do participante: "));
+    strcpy(prtc.sobrenome, pegar_linha("Informe o sobrenome do participante: "));
+    strcpy(prtc.numero_telefone, pegar_linha("Informe o número de telefone do participante: "));
+    strcpy(prtc.numero_documento, pegar_linha("Informe o número de documento do participante: "));
+    
     char *res;
-    bool prtcAdicionado = adicionarParticipante(prtc);
-    if (prtcAdicionado)
-    {
+    bool prtcAdicionado = adicionar_participante(prtc);
+
+    if (prtcAdicionado) {
         res = "Participante adicionado com sucesso";
-    }
-    else
-    {
+    } else {
         res = "Ocorreu um erro ao adicionar o participante";
     }
-    mostrarMensagem(res);
+
+    mostrar_mensagem(res);
     return ROTA_MENU;
 }
 
-Rota listarParticipantesTela()
+Rota listar_participantes_tela()
 {
-    exibirCabecalho("LISTA DE PARTICIPANTES");
+    exibir_cabecalho("LISTA DE PARTICIPANTES");
     struct Participante *prtcs;
-    prtcs = pegarTodosParticipantes();
-    for (int i = 0; i < PARTICIPANTES_ARRAY_SIZE; i++)
-    {
-        mostrarParticipante(prtcs[i]);
-    }
-    mostrarMensagem("Todos os participantes foram listados");
+    prtcs = pegar_todos_participantes();
+
+    for (int i = 0; i < (sizeof(*prtcs) / sizeof(struct Participante)); i++)
+        mostrar_participante(prtcs[i]);
+
+    mostrar_mensagem("Todos os participantes listados");
     return ROTA_MENU;
 }
 
-Rota cadastrarPremiosTela()
+Rota cadastrar_premios_tela()
 {
-    exibirCabecalho("LISTA DE PARTICIPANTES");
+    exibir_cabecalho("LISTA DE PRÊMIOS");
     struct Premio prm;
-    pegarLinha("");
-    prm.desricao = pegarLinha("Informe uma descrição para o prêmio: ");
+    pegar_linha("");
+    strcpy(prm.desricao, pegar_linha("Informe uma descrição para o prêmio: "));
+
     char *res;
-    bool premioAdicionado = adicionarPremio(prm);
-    if (premioAdicionado)
-    {
+    bool premioAdicionado = adicionar_premio(prm);
+
+    if (premioAdicionado) {
         res = "Prêmio adicionado com sucesso";
-    }
-    else 
-    {
+    } else {
         res = "Ocorreu um erro ao adicionar o prêmio";
     }
-    mostrarMensagem(res);
+    
+    mostrar_mensagem(res);
     return ROTA_MENU;
 }
 
-Rota listarPremiosTela()
+Rota listar_premios_tela()
 {
-    exibirCabecalho("LISTA DE PRÊMIOS");
+    exibir_cabecalho("LISTA DE PRÊMIOS");
     struct Premio *premios;
-    premios = pegarTodosPremios();
-    for (int i = 0; i < PREMIOS_ARRAY_SIZE; i++)
-    {
-        mostrarPremio(premios[i]);
-    }
-    mostrarMensagem("Todos os prêmios foram listados");
+    premios = pegar_todos_premios();
+
+    for (int i = 0; i < (sizeof(*premios) / sizeof(struct Premio)); i++)
+        mostrar_premio(premios[i]);
+        
+    mostrar_mensagem("Todos os prêmios listados");
     return ROTA_MENU;
 }
 

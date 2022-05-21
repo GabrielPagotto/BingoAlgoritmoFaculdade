@@ -8,8 +8,7 @@
 
 #include <stdio.h>
 
-typedef enum
-{
+typedef enum {
     ROTA_MENU = 0,
     ROTA_CADASTRAR_PARTICIPANTE = 1,
     ROTA_LISTAR_PARTICIPANTE = 2,
@@ -21,34 +20,32 @@ typedef enum
 
 #include "telas.h"
 
-Rota rotaCtl(Rota proximaRota)
-{
+Rota rota_ctl(Rota proxima_rota) {
     Rota sw;
 
-    switch (proximaRota)
-    {
+    switch (proxima_rota) {
     case ROTA_MENU:
-        sw = menuTela();
+        sw = menu_tela();
         break;
 
     case ROTA_CADASTRAR_PARTICIPANTE:
-        sw = cadastroParticipanteTela();
+        sw = cadastro_participante_tela();
         break;
 
     case ROTA_LISTAR_PARTICIPANTE:
-        sw = listarParticipantesTela();
+        sw = listar_participantes_tela();
         break;
 
     case ROTA_CADASTRAR_PREMIO:
-        sw = cadastrarPremiosTela();
+        sw = cadastrar_premios_tela();
         break;
 
     case ROTA_LISTAR_PREMIOS:
-        sw = listarPremiosTela();
+        sw = listar_premios_tela();
         break;
     
     default:
-        sw = menuTela();
+        sw = menu_tela();
         break;
     }
     return sw;

@@ -10,6 +10,6 @@
 
 int main()
 {
-    rodarSistema();
-    return 1;
+    rodar_sistema();
+    return 0;
 }

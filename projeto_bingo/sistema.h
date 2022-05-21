@@ -12,20 +12,19 @@
 
 #include "rotas.h"
 
-void rotear()
-{
+void rotear() {
     Rota rt = ROTA_MENU;
-    while (rt != 999)
-    {
+
+    while (rt != 999) {
         system("clear");
-        rt = rotaCtl(rt);
+        rt = rota_ctl(rt);
     }
+    
     printf("\nFinalizando...");
     return;
 }
 
-void rodarSistema()
-{
+void rodar_sistema() {
     setvbuf(stdout, NULL, _IONBF, 0);
     setlocale(LC_ALL, "Portuguese_Brasil");
     rotear();

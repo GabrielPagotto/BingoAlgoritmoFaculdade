@@ -15,23 +15,23 @@
 #include "constantes.h"
 #include "globais.h"
 
-int mostrarMensagem(char *mensagem) {
+int mostrar_mensagem(char *mensagem) {
     printf("\n\n  %s.\n", mensagem); 
     fflush(stdout);   
     return system( "read -n 1 -s -p \"  Pressione qualquer tecla para continuar...\"" );
 }
 
-void exibirCabecalho(char *titulo) {
+void exibir_cabecalho(char *titulo) {
     printf("%s\n\n", titulo);
     fflush(stdout);
 }
 
-void exibirOpcao(int opcNum, char *desc) {
-    printf("%d. %s\n", opcNum, desc);
+void exibir_opcao(int num_opc, char *desc) {
+    printf("%d. %s\n", num_opc, desc);
     fflush(stdout);   
 }
 
-char pegarOpcSelecionada() {
+char pegar_opc_selecionada() {
     int sel;
     printf("\n\n  Digite o número para a função desejada: ");
     fflush(stdout);   
@@ -39,161 +39,149 @@ char pegarOpcSelecionada() {
     return sel;
 }
 
-void salvarLog(char *log) {
+void salvar_log(char *log) {
     
 }
 
-void mostrarParticipante(struct Participante prtc) {
+void mostrar_participante(struct Participante prtc) {
     printf("Codigo: %d, Nome: %s, Sobrenome: %s, Telefone: %s, Documento: %s\n",
         prtc.codigo,
         prtc.nome,
         prtc.sobrenome,
-        prtc.numeroTelefone,
-        prtc.numeroDocumento);
+        prtc.numero_telefone,
+        prtc.numero_documento);
+
     fflush(stdout);
 }
 
-char *pegarLinha(char *msg)
+char *pegar_linha(char *msg)
 {
     char *linha = NULL;
     int i = 0, j = 2, caractere;
     linha = (char*) malloc(sizeof(char));
-    if (linha == NULL)
-    {
+
+    if (linha == NULL) {
         printf(ERRO_ALOCACAO_MEMORIA);
         exit(EXIT_FAILURE);
     }
+
     printf("%s", msg);
     fflush(stdout);
-    while((caractere = getc(stdin)) && caractere != '\n')
-    {
+
+    while((caractere = getc(stdin)) && caractere != '\n') {
         linha[i] = caractere;
-        linha = realloc(linha, j*sizeof(char));
-        if (linha == NULL)
-        {
+        linha = realloc(linha, j * sizeof(char));
+
+        if (linha == NULL) {
             printf(ERRO_ALOCACAO_MEMORIA);
             free(linha);
             exit(EXIT_FAILURE);
         }
+
         i++;
         j++;
     }
+
     linha[i] = '\0';
     return linha;
 }
 
-struct Participante *pegarTodosParticipantes() {
+struct Participante *pegar_todos_participantes() {
     struct Participante prtc;
     struct Participante *prtcs;
     FILE *arqv;
-    arqv = fopen(PARTICIPANTES_ARQV, "rb+");
-    PARTICIPANTES_ARRAY_SIZE = 0;
-    prtcs = malloc(sizeof prtc);
+    arqv = fopen(PARTICIPANTES_ARQV, "r");
+    prtcs = malloc(sizeof(struct Participante) * 200);
+
     if (arqv == NULL)
-    {
         return prtcs;
+
+    for (int i = 0; fread(&prtcs[i], sizeof(struct Participante), 1, arqv); i++) {
+        // mostrarParticipante(prtc);
+        // prtcs[i] = prtc;
+        // prtcs = realloc(prtcs, sizeof(struct Participante) * i + 2);
     }
-    for (int i = 0; fread(&prtc, sizeof(prtc), 1, arqv); i++)
-    {
-        prtcs = realloc(prtcs, (i + 2) * sizeof(prtc));
-        prtcs[i] = prtc;
-        PARTICIPANTES_ARRAY_SIZE = i + 1;
-    }
+
     fclose(arqv);
     return prtcs;
 }
 
-bool adicionarParticipante(struct Participante prtc) {
-    struct Participante *todsPrtcs;
-    todsPrtcs = pegarTodosParticipantes();
+bool adicionar_participante(struct Participante prtc) {
+    struct Participante *tods_prtcs;
+    tods_prtcs = pegar_todos_participantes();
     prtc.codigo = 1;
-    if (PARTICIPANTES_ARRAY_SIZE > 0)
-    {
-        for (int i = 0; i < PARTICIPANTES_ARRAY_SIZE; i++)
-        {
-            if (todsPrtcs[i].codigo >= prtc.codigo)
-            {
-                prtc.codigo = todsPrtcs[i].codigo + 1;
-            }
-        }
-    }
+
+    for (int i = 0; i < sizeof(*tods_prtcs) / sizeof(struct Participante); i++)
+        if (tods_prtcs[i].codigo >= prtc.codigo)
+            prtc.codigo = tods_prtcs[i].codigo + 1;
+
     FILE *arqv;
     arqv = fopen(PARTICIPANTES_ARQV, "a");
+
     if (arqv == NULL) 
-    {
         return false;
-    }
-    fwrite(&prtc, sizeof(prtc), 1, arqv);
-    if (fwrite != 0)
-    {
+
+    fwrite(&prtc, sizeof(struct Participante), 1, arqv);
+
+    if (*fwrite != 0) {
+        printf("Certo");
         fclose(arqv);
         return true;
-    } 
-    else
-    {
+    } else {
+        printf("Errado");
         fclose(arqv);
         return false;
     }
 }
 
-void mostrarPremio(struct Premio premio) {
+void mostrar_premio(struct Premio premio) {
     printf("Codigo: %d, Descrição: %s\n",
         premio.codigo,
         premio.desricao);
+
     fflush(stdout);
 }
 
-struct Premio *pegarTodosPremios()
-{
-    PREMIOS_ARRAY_SIZE = 0;
+struct Premio *pegar_todos_premios() {
     struct Premio premio;
     struct Premio *premios;
     FILE *arqv;
     arqv = fopen(PREMIOS_ARQV, "rb+");
     premios = malloc(sizeof premio);
+
     if (arqv == NULL)
-    {
         return premios;
-    }
-    for (int i = 0; fread(&premio, sizeof(premio), 1, arqv); i++)
-    {
+
+    for (int i = 0; fread(&premio, sizeof(premio), 1, arqv); i++) {
         premios = realloc(premios, (i + 2) * sizeof(premio));
         premios[i] = premio;
-        PREMIOS_ARRAY_SIZE = i + 1;
     }
+    
     fclose(arqv);
     return premios;
 }
 
-bool adicionarPremio(struct Premio premio)
-{
-    struct Participante *todsPremios;
-    todsPremios = pegarTodosPremios();
+bool adicionar_premio(struct Premio premio) {
+    struct Premio *tods_premios;
+    tods_premios = pegar_todos_premios();
     premio.codigo = 1;
-    if (PREMIOS_ARRAY_SIZE > 0)
-    {
-        for (int i = 0; i < PREMIOS_ARRAY_SIZE; i++)
-        {
-            if (todsPremios[i].codigo >= premio.codigo)
-            {
-                premio.codigo = todsPremios[i].codigo + 1;
-            }
-        }
-    }
+    
+    for (int i = 0; i < sizeof(*tods_premios) / sizeof(struct Premio); i++)
+        if (tods_premios[i].codigo >= premio.codigo)
+            premio.codigo = tods_premios[i].codigo + 1;
+
     FILE *arqv;
     arqv = fopen(PREMIOS_ARQV, "a");
-    if (arqv == NULL) 
-    {
+
+    if (arqv == NULL)
         return false;
-    }
+
     fwrite(&premio, sizeof(premio), 1, arqv);
-    if (fwrite != 0)
-    {
+
+    if (*fwrite != 0) {
         fclose(arqv);
         return true;
-    } 
-    else
-    {
+    } else {
         fclose(arqv);
         return false;
     }
