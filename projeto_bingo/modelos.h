@@ -21,4 +21,10 @@ typedef struct {
     char desricao[16];   
 } Premio;
 
+typedef struct {
+    int intervalo_inicio;
+    int intervalo_final;
+    int intervalor_cartela;
+} BingoConfiguracao;
+
 #endif /* modelos_h */

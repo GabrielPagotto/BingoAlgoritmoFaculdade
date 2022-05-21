@@ -2,5 +2,5 @@
 main.exe
 main.obj
 main
-projetoBingoParticipantes.txt
-projetoBingoPremios.txt
+data/
+resultados/

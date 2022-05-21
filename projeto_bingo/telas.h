@@ -35,16 +35,16 @@ Rota cadastro_participante_tela() {
     strcpy(prtc.numero_telefone, pegar_linha("Informe o número de telefone do participante: "));
     strcpy(prtc.numero_documento, pegar_linha("Informe o número de documento do participante: "));
     
-    char *res;
+    char *mensagem, *log;
     bool prtcAdicionado = adicionar_participante(prtc);
 
     if (prtcAdicionado) {
-        res = "Participante adicionado com sucesso";
+        mensagem = "O participante foi adicionado com sucesso";
     } else {
-        res = "Ocorreu um erro ao adicionar o participante";
+        mensagem = "Ocorreu um erro ao adicionar o participante";
     }
 
-    mostrar_mensagem(res);
+    mostrar_mensagem(mensagem);
     return ROTA_MENU;
 }
 

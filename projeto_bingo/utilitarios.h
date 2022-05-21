@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "modelos.h" 
 #include "constantes.h"
@@ -126,7 +128,7 @@ bool adicionar_participante(Participante prtc) {
     if (arqv == NULL) 
         return false;
 
-    fwrite(&prtc, sizeof(Participante), 1, arqv);
+    fwrite(&prtc, sizeof(prtc), 1, arqv);
 
     if (*fwrite != 0) {
         fclose(arqv);
@@ -195,6 +197,15 @@ bool adicionar_premio(Premio premio) {
         fclose(arqv);
         return false;
     }
+}
+
+void criar_pastas_necessarias() { 
+    mkdir(DATA_FOLDER_NAME, S_IRWXU);
+    mkdir(RESULTADOS_FOLDER_NAME, S_IRWXU);
+}
+
+void alterar_configuracoes_bingo(BingoConfiguracao config) { 
+    
 }
 
 #endif /* utilitarios_h */
