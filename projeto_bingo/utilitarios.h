@@ -87,6 +87,13 @@ char *pegar_linha(char *msg)
     return linha;
 }
 
+int pegar_int(char *msg) {
+    int resultado;
+    printf("%s", msg);
+    scanf("%d", &resultado);
+    return resultado;
+}
+
 Participante *pegar_todos_participantes(int *array_size) {
     Participante *prtcs;
     Participante prtc;
@@ -204,8 +211,36 @@ void criar_pastas_necessarias() {
     mkdir(RESULTADOS_FOLDER_NAME, S_IRWXU);
 }
 
-void alterar_configuracoes_bingo(BingoConfiguracao config) { 
+bool alterar_configuracoes_bingo(BingoConfiguracao config) { 
+    FILE *arqv;
+    arqv = fopen(BINGO_CONFIG_ARQV, "w");
+
+    if (arqv == NULL)
+        return false;
+
+    fwrite(&config, sizeof(config), 1, arqv);
     
+    if (*fwrite != 0) {
+        fclose(arqv);
+        return true;
+    } else {
+        fclose(arqv);
+        return false;
+    }
+}
+
+BingoConfiguracao pegar_configuracoes_bingo() {
+    BingoConfiguracao config = {1, 60, 6};
+    FILE *arqv;
+    arqv = fopen(BINGO_CONFIG_ARQV, "rb+");
+
+    if (arqv == NULL) {
+        alterar_configuracoes_bingo(config);
+        return config;
+    }
+
+    fread(&config, sizeof(config), 1, arqv);
+    return config;
 }
 
 #endif /* utilitarios_h */

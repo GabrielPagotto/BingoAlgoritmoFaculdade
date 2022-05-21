@@ -24,7 +24,7 @@ typedef struct {
 typedef struct {
     int intervalo_inicio;
     int intervalo_final;
-    int intervalor_cartela;
+    int numeros_catela;
 } BingoConfiguracao;
 
 #endif /* modelos_h */

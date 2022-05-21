@@ -16,7 +16,7 @@
 /* Locais que serão usados para guardar dados */
 #define PARTICIPANTES_ARQV "data/participantes.txt"
 #define PREMIOS_ARQV "data/premios.txt"
-#define BINGO_CONFIG_ARQV "data/config.txt";
+#define BINGO_CONFIG_ARQV "data/config.txt"
 
 /* Locais que são usados para guardar dados de resultados. */
 #define LOGS_ARQV "resultados/historico.txt"

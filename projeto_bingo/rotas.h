@@ -14,7 +14,8 @@ typedef enum {
     ROTA_LISTAR_PARTICIPANTE = 2,
     ROTA_CADASTRAR_PREMIO = 3,
     ROTA_LISTAR_PREMIOS = 4,
-    ROTA_CADASTRAR_NUMERO = 5,
+    ROTA_CONFIGURACOES = 5,
+    ROTA_ALTERAR_CONFIGURACOES = 998, 
     ROTA_FINALIZAR = 999
 } Rota;
 
@@ -42,6 +43,14 @@ Rota rota_ctl(Rota proxima_rota) {
 
     case ROTA_LISTAR_PREMIOS:
         sw = listar_premios_tela();
+        break;
+
+    case ROTA_CONFIGURACOES:
+        sw = configuracoes_tela();
+        break;
+
+    case ROTA_ALTERAR_CONFIGURACOES:
+        sw = alterar_configuracoes_tela();
         break;
     
     default:

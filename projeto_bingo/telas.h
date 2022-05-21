@@ -18,6 +18,7 @@ Rota menu_tela() {
     exibir_opcao(ROTA_LISTAR_PARTICIPANTE, "Listar Participantes");
     exibir_opcao(ROTA_CADASTRAR_PREMIO, "Cadastrar prêmios");
     exibir_opcao(ROTA_LISTAR_PREMIOS, "Listar prêmios");
+    exibir_opcao(ROTA_CONFIGURACOES, "Configurações" );
     exibir_opcao(ROTA_FINALIZAR, "Fechar");
     int proxRota = pegar_opc_selecionada();
     return proxRota;
@@ -94,4 +95,45 @@ Rota listar_premios_tela() {
     return ROTA_MENU;
 }
 
+Rota configuracoes_tela() { 
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    exibir_cabecalho("CONFIGURAÇÕES");
+    printf("Intervalo dos números da cartela: %d até %d.\n", config.intervalo_inicio, config.intervalo_final);
+    printf("Quantidade de números por catela: %d\n\n", config.numeros_catela);
+    
+
+    exibir_opcao(1, "Alterar configurações"); 
+    exibir_opcao(2, "Voltar para o menu"); 
+    char opc = pegar_opc_selecionada();
+
+    if (opc == 1)
+        return ROTA_ALTERAR_CONFIGURACOES;
+
+    return ROTA_MENU;
+}
+
+Rota alterar_configuracoes_tela() { 
+    BingoConfiguracao config;
+
+    config.intervalo_inicio = pegar_int("Informe o intervalo inicial para os números do bingo: ");
+    config.intervalo_final = pegar_int("Informe o intervalo final para os números do bingo: ");
+
+    if (config.intervalo_final <= config.intervalo_inicio) {
+        mostrar_mensagem("O intervalo final deve ser maior que o inicial, nenhuma alteração foi realizada");
+        return ROTA_MENU;
+    }
+    
+    config.numeros_catela = pegar_int("Qual o número máximo de números sorteados por cartela: ");
+
+    if (config.numeros_catela < 6) {
+        mostrar_mensagem("O número de seleções por cartela deve ser maior que 5, nenhuma alteração foi realizada");
+        return ROTA_MENU;
+    }
+
+    alterar_configuracoes_bingo(config);
+    mostrar_mensagem("Alterações realizadas com sucesso.");
+    return ROTA_MENU;
+}
+    
 #endif /* telas_h */
+s
