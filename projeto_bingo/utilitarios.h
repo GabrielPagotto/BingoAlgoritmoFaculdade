@@ -43,7 +43,7 @@ void salvar_log(char *log) {
     
 }
 
-void mostrar_participante(struct Participante prtc) {
+void mostrar_participante(Participante prtc) {
     printf("Codigo: %d, Nome: %s, Sobrenome: %s, Telefone: %s, Documento: %s\n",
         prtc.codigo,
         prtc.nome,
@@ -86,32 +86,32 @@ char *pegar_linha(char *msg)
     return linha;
 }
 
-struct Participante *pegar_todos_participantes() {
-    struct Participante prtc;
-    struct Participante *prtcs;
+Participante *pegar_todos_participantes() {
+    Participante prtc;
+    Participante *prtcs;
     FILE *arqv;
     arqv = fopen(PARTICIPANTES_ARQV, "r");
-    prtcs = malloc(sizeof(struct Participante) * 200);
+    prtcs = malloc(sizeof(Participante) * 200);
 
     if (arqv == NULL)
         return prtcs;
 
-    for (int i = 0; fread(&prtcs[i], sizeof(struct Participante), 1, arqv); i++) {
+    for (int i = 0; fread(&prtcs[i], sizeof(Participante), 1, arqv); i++) {
         // mostrarParticipante(prtc);
         // prtcs[i] = prtc;
-        // prtcs = realloc(prtcs, sizeof(struct Participante) * i + 2);
+        // prtcs = realloc(prtcs, sizeof(Participante) * i + 2);
     }
 
     fclose(arqv);
     return prtcs;
 }
 
-bool adicionar_participante(struct Participante prtc) {
-    struct Participante *tods_prtcs;
+bool adicionar_participante(Participante prtc) {
+    Participante *tods_prtcs;
     tods_prtcs = pegar_todos_participantes();
     prtc.codigo = 1;
 
-    for (int i = 0; i < sizeof(*tods_prtcs) / sizeof(struct Participante); i++)
+    for (int i = 0; i < sizeof(*tods_prtcs) / sizeof(Participante); i++)
         if (tods_prtcs[i].codigo >= prtc.codigo)
             prtc.codigo = tods_prtcs[i].codigo + 1;
 
@@ -121,7 +121,7 @@ bool adicionar_participante(struct Participante prtc) {
     if (arqv == NULL) 
         return false;
 
-    fwrite(&prtc, sizeof(struct Participante), 1, arqv);
+    fwrite(&prtc, sizeof(Participante), 1, arqv);
 
     if (*fwrite != 0) {
         printf("Certo");
@@ -134,7 +134,7 @@ bool adicionar_participante(struct Participante prtc) {
     }
 }
 
-void mostrar_premio(struct Premio premio) {
+void mostrar_premio(Premio premio) {
     printf("Codigo: %d, Descrição: %s\n",
         premio.codigo,
         premio.desricao);
@@ -142,9 +142,9 @@ void mostrar_premio(struct Premio premio) {
     fflush(stdout);
 }
 
-struct Premio *pegar_todos_premios() {
-    struct Premio premio;
-    struct Premio *premios;
+Premio *pegar_todos_premios() {
+    Premio premio;
+    Premio *premios;
     FILE *arqv;
     arqv = fopen(PREMIOS_ARQV, "rb+");
     premios = malloc(sizeof premio);
@@ -161,12 +161,12 @@ struct Premio *pegar_todos_premios() {
     return premios;
 }
 
-bool adicionar_premio(struct Premio premio) {
-    struct Premio *tods_premios;
+bool adicionar_premio(Premio premio) {
+    Premio *tods_premios;
     tods_premios = pegar_todos_premios();
     premio.codigo = 1;
     
-    for (int i = 0; i < sizeof(*tods_premios) / sizeof(struct Premio); i++)
+    for (int i = 0; i < sizeof(*tods_premios) / sizeof(Premio); i++)
         if (tods_premios[i].codigo >= premio.codigo)
             premio.codigo = tods_premios[i].codigo + 1;
 

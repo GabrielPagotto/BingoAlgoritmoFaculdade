@@ -27,7 +27,7 @@ Rota menu_tela() {
 #include "modelos.h"
 
 Rota cadastro_participante_tela() {
-    struct Participante prtc;
+    Participante prtc;
     exibir_cabecalho("CADASTRAR PARTICIPANTE");
     pegar_linha("");
 
@@ -52,10 +52,14 @@ Rota cadastro_participante_tela() {
 Rota listar_participantes_tela()
 {
     exibir_cabecalho("LISTA DE PARTICIPANTES");
-    struct Participante *prtcs;
+    Participante *prtcs;
     prtcs = pegar_todos_participantes();
 
-    for (int i = 0; i < (sizeof(*prtcs) / sizeof(struct Participante)); i++)
+    ssize_t prtcsSize = sizeof(*prtcs);
+
+    printf("%d", (int) sizeof(prtcs));
+
+    for (int i = 0; i < (sizeof(*prtcs) / sizeof(Participante)); i++)
         mostrar_participante(prtcs[i]);
 
     mostrar_mensagem("Todos os participantes listados");
@@ -65,7 +69,7 @@ Rota listar_participantes_tela()
 Rota cadastrar_premios_tela()
 {
     exibir_cabecalho("LISTA DE PRÊMIOS");
-    struct Premio prm;
+    Premio prm;
     pegar_linha("");
     strcpy(prm.desricao, pegar_linha("Informe uma descrição para o prêmio: "));
 
@@ -85,10 +89,10 @@ Rota cadastrar_premios_tela()
 Rota listar_premios_tela()
 {
     exibir_cabecalho("LISTA DE PRÊMIOS");
-    struct Premio *premios;
+    Premio *premios;
     premios = pegar_todos_premios();
 
-    for (int i = 0; i < (sizeof(*premios) / sizeof(struct Premio)); i++)
+    for (int i = 0; i < (sizeof(*premios) / sizeof(Premio)); i++)
         mostrar_premio(premios[i]);
         
     mostrar_mensagem("Todos os prêmios listados");
