@@ -125,7 +125,6 @@ Rota listar_participantes_tela() {
 
     prtcs = pegar_todos_participantes(&array_size);
     exibir_cabecalho("PARTICIPANTES");
-    divisor();
     
     if (array_size == 0) {
         printf("    Nenhum participante cadastrado.\n");
@@ -134,14 +133,20 @@ Rota listar_participantes_tela() {
             mostrar_participante(prtcs[i]);
     }
 
-    divisor();
     printf("\n");
     exibir_opcao(1, "Adicionar participante"); 
-    exibir_opcao(2, "Voltar para o menu"); 
+
+    if (array_size > 0)
+        exibir_opcao(2, "Cartela participante"); 
+
+    exibir_opcao(3, "Voltar para o menu"); 
     char opc = pegar_opc_selecionada();
 
     if (opc == 1)
         return ROTA_CADASTRAR_PARTICIPANTE;
+
+    if (opc == 2)
+        return ROTA_CARTELA_PARTICIPANTE;
 
     return ROTA_MENU;
 }
@@ -185,7 +190,6 @@ Rota listar_premios_tela() {
     Premio *premios;
     premios = pegar_todos_premios(&array_size);
     exibir_cabecalho("LISTA DE PRÊMIOS");
-    divisor();
 
     if (array_size == 0) { 
         printf("    Nenhum prêmio cadastrado.\n");
@@ -193,7 +197,6 @@ Rota listar_premios_tela() {
         for (int i = 0; i < array_size; i++)
             mostrar_premio(premios[i]);
     }
-    divisor();
 
     printf("\n");
     exibir_opcao(1, "Adicionar prêmio"); 
@@ -207,11 +210,8 @@ Rota listar_premios_tela() {
 }
 
 Rota configuracoes_tela() { 
-    BingoConfiguracao config = pegar_configuracoes_bingo();
     exibir_cabecalho("CONFIGURAÇÕES");
-    printf("Intervalo dos números da cartela: %d até %d.\n", config.intervalo_inicio, config.intervalo_final);
-    printf("Quantidade de números por catela: %d\n\n", config.numeros_catela);
-    
+    mostrar_configuracoes_bingo();
 
     exibir_opcao(1, "Alterar configurações"); 
     exibir_opcao(2, "Voltar para o menu"); 
@@ -244,6 +244,118 @@ Rota alterar_configuracoes_tela() {
 
     alterar_configuracoes_bingo(config);
     return ROTA_CONFIGURACOES;
+}
+
+Rota cartela_participante_tela() { 
+    Participante *prtcs;
+    Participante prtcpt = {0, "", "", "", ""};
+    int array_size;
+
+    do { 
+        prtcs = pegar_todos_participantes(&array_size);
+        exibir_cabecalho("PARTICIPANTES");
+        
+        for (int i = 0; i < array_size; i++)
+            mostrar_participante(prtcs[i]);
+
+        printf("\n");
+
+        int participante_codigo;
+        printf("Informe o código do participante que deseja visualizar a cartela: ");
+        scanf("%d", &participante_codigo);
+        prtcpt = pegar_participante_por_codigo(participante_codigo);
+
+        if (prtcpt.codigo == 0) {
+            mostrar_mensagem("Participante com este código não foi encontrado");
+            system("clear");
+            continue;
+        }
+    } while (prtcpt.codigo == 0);
+
+    system("clear");
+    printf("CARTELA - %s %s\n\n", prtcpt.nome, prtcpt.sobrenome);
+    char *cad_title;
+    char *opc1_message;
+
+    if (prtcpt.cartela.codigo == 0) { 
+        cad_title = "ADICIONAR CARTELA";
+        opc1_message = "Adicionar cartela";
+        printf("    Participante ainda não possui uma cartela cadastrada.\n\n"); 
+    } else { 
+        cad_title = "EDITAR CARTELA";
+        opc1_message = "Editar cartela";
+        mostrar_cartela(prtcpt.cartela);
+    }
+
+    exibir_opcao(1, opc1_message); 
+    exibir_opcao(2, "Voltar para participantes"); 
+    exibir_opcao(3, "Voltar para o menu"); 
+    char opc = pegar_opc_selecionada();
+
+    if (opc == 1) {
+        BingoConfiguracao config = pegar_configuracoes_bingo();
+        int numeros_cartela[config.numeros_catela];
+
+        for (int i = 0; i < config.numeros_catela + 1; i++) {
+            system("clear");
+            printf("%s - %s %s\n\n", cad_title, prtcpt.nome, prtcpt.sobrenome);
+            mostrar_configuracoes_bingo();
+            printf("\n");
+
+            printf("CARTELA [ ");
+            for (int j = 0; j < sizeof(numeros_cartela) / sizeof(int); j++) {
+                if (j < i) { 
+                    printf("%d ", numeros_cartela[j]);
+                } else {
+                    printf("%c ", '_');
+                }
+            }
+
+            printf("]");
+
+            if (i != config.numeros_catela) {
+                printf("\n\nInforme um número: ");
+                scanf("%d", &numeros_cartela[i]);
+
+                for (int j = 0; j < i; j++) {
+                    if (numeros_cartela[j] == numeros_cartela[i]) {
+                        mostrar_mensagem("Este número já está cadastrado na cartela");
+                        i--;
+                        continue;
+                    }
+
+                    if (numeros_cartela[i] < config.intervalo_inicio) {
+                        mostrar_mensagem("O número não pode ser menor que o intervalo inicial");
+                        i--;
+                        continue;
+                    }
+
+                    if (numeros_cartela[i] > config.intervalo_final) {
+                        mostrar_mensagem("O número não pode ser maior que o intervalo final");
+                        i--;
+                        continue;
+                    }
+                }   
+            }
+        }
+
+        bool salva = salvar_cartela_participante(prtcpt, numeros_cartela);
+
+        if (salva) {
+            mostrar_mensagem("Cartela salva com sucesso");
+        } else {
+            mostrar_mensagem("Ocorreu um erro ao salvar a cartela");
+        }
+
+        system("clear");
+        return ROTA_LISTAR_PARTICIPANTE;
+    } else { 
+        system("clear");
+        if (opc == 2)
+            return ROTA_LISTAR_PARTICIPANTE;
+            
+        return ROTA_MENU;
+    }
 }
     
 #endif /* telas_h */

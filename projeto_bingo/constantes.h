@@ -12,6 +12,7 @@
 
 /* Pastas que serão necessárias para a execução do sistema */  
 #define DATA_FOLDER_NAME "data"
+#define DATA_PARTICIPANTES_FOLDER_NAME "data/participantes"
 #define RESULTADOS_FOLDER_NAME "resultados"
 
 /* Locais que serão usados para guardar dados */

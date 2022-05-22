@@ -127,6 +127,7 @@ bool adicionar_participante(Participante prtc) {
     Participante *tods_prtcs;
     tods_prtcs = pegar_todos_participantes(&array_size);
     prtc.codigo = 1;
+    prtc.cartela.codigo = 0;
 
     if (array_size > 0)
         for (int i = 0; i < array_size; i++)
@@ -245,6 +246,89 @@ BingoConfiguracao pegar_configuracoes_bingo() {
 
     fread(&config, sizeof(config), 1, arqv);
     return config;
+}
+
+void mostrar_cartela(Cartela cartela) {
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    printf("\n\n");
+
+    for (int i = 0; i < config.numeros_catela; i++)
+        printf("%d ", cartela.numeros[i]);
+
+    printf("\n\n");
+}
+
+void mostrar_configuracoes_bingo() {
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    printf("Intervalo dos números da cartela: %d até %d.\n", config.intervalo_inicio, config.intervalo_final);
+    printf("Quantidade de números por catela: %d\n\n", config.numeros_catela);
+}
+
+
+Participante pegar_participante_por_codigo(int participante_codigo) {
+    int array_size;
+    Participante *participantes;
+    participantes = pegar_todos_participantes(&array_size);
+
+    for (int i = 0; i < array_size; i++)
+        if (participantes[i].codigo == participante_codigo)
+            return participantes[i];
+
+    Participante participante_vazio = {0, "", "", "", ""};
+    return participante_vazio;
+}
+
+bool atualizar_participante(Participante participante) { 
+    int array_size;
+    Participante *participantes;
+    participantes = pegar_todos_participantes(&array_size);
+
+    FILE *arqv;
+    arqv = fopen(PARTICIPANTES_ARQV, "w");
+
+    if (arqv == NULL) 
+        return false;
+    
+    fprintf(arqv, "");
+    fclose(arqv);
+    arqv = fopen(PARTICIPANTES_ARQV, "a");
+    
+    if (arqv == NULL) 
+        return false;
+
+    for (int i = 0; i < array_size; i++) {
+        Participante part_update = participantes[i];
+        if (participantes[i].codigo == participante.codigo) {
+            part_update = participante;
+        }
+
+        fwrite(&part_update, sizeof(part_update), 1, arqv);
+    }
+        
+    if (*fwrite != 0) {
+        fclose(arqv);
+        return true;
+    } else {
+        fclose(arqv);
+        return false;
+    }
+}
+
+bool salvar_cartela_participante(Participante prt, int *numeros_cartela) {
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    int nums[config.numeros_catela];
+
+    for (int i = 0; i < config.numeros_catela; i++)
+        nums[i] = numeros_cartela[i];
+
+    Cartela crtl;
+
+    crtl.codigo = 1;
+    crtl.numeros = nums;
+
+    prt.cartela = crtl;
+    strcpy(prt.nome, "Guilherme");
+    return atualizar_participante(prt);
 }
 
 #endif /* utilitarios_h */

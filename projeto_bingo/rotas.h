@@ -13,10 +13,11 @@ typedef enum {
     ROTA_LISTAR_PARTICIPANTE = 1,
     ROTA_LISTAR_PREMIOS = 2,
     ROTA_CONFIGURACOES = 3,
-    ROTA_CADASTRAR_PREMIO = 996,
-    ROTA_CADASTRAR_PARTICIPANTE = 997,
-    ROTA_ALTERAR_CONFIGURACOES = 998, 
-    ROTA_FINALIZAR = 999
+    ROTA_FINALIZAR = 999,
+    ROTA_CARTELA_PARTICIPANTE = 500,
+    ROTA_CADASTRAR_PREMIO = 501,
+    ROTA_CADASTRAR_PARTICIPANTE = 502,
+    ROTA_ALTERAR_CONFIGURACOES = 503
 } Rota;
 
 #include "telas.h"
@@ -52,6 +53,9 @@ Rota rota_ctl(Rota proxima_rota) {
     case ROTA_ALTERAR_CONFIGURACOES:
         sw = alterar_configuracoes_tela();
         break;
+
+    case ROTA_CARTELA_PARTICIPANTE:
+        sw = cartela_participante_tela();
     
     default:
         sw = menu_tela();
