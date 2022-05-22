@@ -12,8 +12,8 @@ typedef struct {
     int codigo;
     char nome[16];
     char sobrenome[32];
-    char numero_telefone[11];
-    char numero_documento[11];
+    char numero_telefone[12];
+    char numero_documento[12];
 } Participante;
 
 typedef struct {   

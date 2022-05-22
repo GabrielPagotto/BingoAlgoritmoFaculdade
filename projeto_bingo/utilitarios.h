@@ -44,6 +44,10 @@ void salvar_log(char *log) {
     
 }
 
+void divisor() { 
+    printf("-----------------------------------------------\n");
+}
+
 void mostrar_participante(Participante prtc) {
     printf("Codigo: %d, Nome: %s, Sobrenome: %s, Telefone: %s, Documento: %s\n",
         prtc.codigo,
