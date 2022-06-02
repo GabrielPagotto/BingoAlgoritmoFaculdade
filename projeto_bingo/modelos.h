@@ -7,6 +7,7 @@
 #define modelos_h
 
 #include <stdio.h>
+#include "constantes.h"
 
 typedef struct {
     int intervalo_inicio;
@@ -15,8 +16,8 @@ typedef struct {
 } BingoConfiguracao;
 
 typedef struct {
-    int codigo;
-    int *numeros;
+    int ativo;
+    char numeros[MAX_NUMEROS_POR_CARTELA];
 } Cartela;
 
 typedef struct {

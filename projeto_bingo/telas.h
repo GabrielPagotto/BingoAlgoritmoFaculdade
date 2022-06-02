@@ -277,7 +277,7 @@ Rota cartela_participante_tela() {
     char *cad_title;
     char *opc1_message;
 
-    if (prtcpt.cartela.codigo == 0) { 
+    if (prtcpt.cartela.ativo == 0) { 
         cad_title = "ADICIONAR CARTELA";
         opc1_message = "Adicionar cartela";
         printf("    Participante ainda não possui uma cartela cadastrada.\n\n"); 

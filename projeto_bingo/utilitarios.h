@@ -127,7 +127,7 @@ bool adicionar_participante(Participante prtc) {
     Participante *tods_prtcs;
     tods_prtcs = pegar_todos_participantes(&array_size);
     prtc.codigo = 1;
-    prtc.cartela.codigo = 0;
+    prtc.cartela.ativo = 0;
 
     if (array_size > 0)
         for (int i = 0; i < array_size; i++)
@@ -250,12 +250,12 @@ BingoConfiguracao pegar_configuracoes_bingo() {
 
 void mostrar_cartela(Cartela cartela) {
     BingoConfiguracao config = pegar_configuracoes_bingo();
-    printf("\n\n");
+    printf("\n[ ");
 
     for (int i = 0; i < config.numeros_catela; i++)
-        printf("%d ", cartela.numeros[i]);
+        printf("%c ", cartela.numeros[i]);
 
-    printf("\n\n");
+    printf("]\n\n");
 }
 
 void mostrar_configuracoes_bingo() {
@@ -316,18 +316,16 @@ bool atualizar_participante(Participante participante) {
 
 bool salvar_cartela_participante(Participante prt, int *numeros_cartela) {
     BingoConfiguracao config = pegar_configuracoes_bingo();
-    int nums[config.numeros_catela];
+    char nums[config.numeros_catela];
 
     for (int i = 0; i < config.numeros_catela; i++)
-        nums[i] = numeros_cartela[i];
+        nums[i] = numeros_cartela[i] + '0';
 
     Cartela crtl;
-
-    crtl.codigo = 1;
-    crtl.numeros = nums;
+    crtl.ativo = 1;
+    strcpy(crtl.numeros, nums);
 
     prt.cartela = crtl;
-    strcpy(prt.nome, "Guilherme");
     return atualizar_participante(prt);
 }
 

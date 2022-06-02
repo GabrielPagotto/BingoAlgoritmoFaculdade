@@ -9,6 +9,7 @@
 /* Variáveis globais */ 
 #define ERRO_ALOCACAO_MEMORIA "Erro de alocação de memória"
 #define GET_STRING_MAX_LENGTH 10000
+#define MAX_NUMEROS_POR_CARTELA 100
 
 /* Pastas que serão necessárias para a execução do sistema */  
 #define DATA_FOLDER_NAME "data"
