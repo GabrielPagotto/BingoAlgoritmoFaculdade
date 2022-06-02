@@ -17,7 +17,7 @@ void rotear() {
     Rota rt = ROTA_MENU;
 
     while (rt != 999) {
-        system("clear");
+        system(CLEAR_KEY);
         rt = rota_ctl(rt);
     }
     

@@ -24,4 +24,12 @@
 /* Locais que são usados para guardar dados de resultados. */
 #define LOGS_ARQV "resultados/historico.txt"
 
+/* Constantes sobre o sistema operacional */ 
+
+#define MAC_CLEAR_KEY "clear"
+#define WINDOWS_CLEAR_KEY "cls"
+
+/// Usar MAC_CLEAR_KEY para MacOS e WINDOWS_CLEAR_KEY para Windows
+#define CLEAR_KEY MAC_CLEAR_KEY
+
 #endif /* constantes_h */

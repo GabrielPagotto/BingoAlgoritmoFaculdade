@@ -55,7 +55,7 @@ Rota cadastro_participante_tela() {
         nome_valido = strlen(str) > 0 && strlen(str) < 16;
         if (!nome_valido) {
             mostrar_mensagem("O nome do participante precisa ter entre 1 e 16 caracteres");
-            system("clear");
+            system(CLEAR_KEY);
             continue;
         }
         
@@ -72,7 +72,7 @@ Rota cadastro_participante_tela() {
         sobrenome_valido = strlen(str) > 0 && strlen(str) < 32;
         if (!sobrenome_valido) {
             mostrar_mensagem("O sobrenome do participante precisa ter entre 1 e 32 caracteres");
-            system("clear");
+            system(CLEAR_KEY);
             continue;
         }
 
@@ -89,7 +89,7 @@ Rota cadastro_participante_tela() {
         numero_telefone_valido = strlen(str) == 10 || strlen(str) == 11;
         if (!numero_telefone_valido) {
             mostrar_mensagem("O número de telefone do participante precisa ter 10 ou 11 caracteres");
-            system("clear");
+            system(CLEAR_KEY);
             continue;
         }
 
@@ -106,7 +106,7 @@ Rota cadastro_participante_tela() {
         numero_documento_valido = strlen(str) == 11;
         if (!numero_documento_valido) {
             mostrar_mensagem("O número de documento do participante precisa ter 11 caracteres");
-            system("clear");
+            system(CLEAR_KEY);
             continue;
         }
 
@@ -173,7 +173,7 @@ Rota cadastrar_premios_tela() {
         descricao_valida = strlen(str) > 0 && strlen(str) < 16;
         if (!descricao_valida) {
             mostrar_mensagem("A descricao do prêmio precisa ter entre 1 e 16 caracteres");
-            system("clear");
+            system(CLEAR_KEY);
             continue;
         }
 
@@ -267,12 +267,12 @@ Rota cartela_participante_tela() {
 
         if (prtcpt.codigo == 0) {
             mostrar_mensagem("Participante com este código não foi encontrado");
-            system("clear");
+            system(CLEAR_KEY);
             continue;
         }
     } while (prtcpt.codigo == 0);
 
-    system("clear");
+    system(CLEAR_KEY);
     printf("CARTELA - %s %s\n\n", prtcpt.nome, prtcpt.sobrenome);
     char *cad_title;
     char *opc1_message;
@@ -297,7 +297,7 @@ Rota cartela_participante_tela() {
         int numeros_cartela[config.numeros_catela];
 
         for (int i = 0; i < config.numeros_catela + 1; i++) {
-            system("clear");
+            system(CLEAR_KEY);
             printf("%s - %s %s\n\n", cad_title, prtcpt.nome, prtcpt.sobrenome);
             mostrar_configuracoes_bingo();
             printf("\n");
@@ -347,10 +347,10 @@ Rota cartela_participante_tela() {
             mostrar_mensagem("Ocorreu um erro ao salvar a cartela");
         }
 
-        system("clear");
+        system(CLEAR_KEY);
         return ROTA_LISTAR_PARTICIPANTE;
     } else { 
-        system("clear");
+        system(CLEAR_KEY);
         if (opc == 2)
             return ROTA_LISTAR_PARTICIPANTE;
             
