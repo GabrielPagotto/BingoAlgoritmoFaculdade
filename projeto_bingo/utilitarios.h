@@ -248,16 +248,6 @@ BingoConfiguracao pegar_configuracoes_bingo() {
     return config;
 }
 
-void mostrar_cartela(Cartela cartela) {
-    BingoConfiguracao config = pegar_configuracoes_bingo();
-    printf("\n[ ");
-
-    for (int i = 0; i < config.numeros_catela; i++)
-        printf("%c ", cartela.numeros[i]);
-
-    printf("]\n\n");
-}
-
 void mostrar_configuracoes_bingo() {
     BingoConfiguracao config = pegar_configuracoes_bingo();
     printf("Intervalo dos números da cartela: %d até %d.\n", config.intervalo_inicio, config.intervalo_final);
@@ -316,10 +306,25 @@ bool atualizar_participante(Participante participante) {
 
 bool salvar_cartela_participante(Participante prt, int *numeros_cartela) {
     BingoConfiguracao config = pegar_configuracoes_bingo();
-    char nums[config.numeros_catela];
+    char nums[MAX_NUMEROS_POR_CARTELA];
+    int numeros_counter = 0;
 
-    for (int i = 0; i < config.numeros_catela; i++)
-        nums[i] = numeros_cartela[i] + '0';
+    for (int i = 0; i < MAX_NUMEROS_POR_CARTELA; i++) {
+        if (numeros_counter >= config.numeros_catela)
+            break;
+
+        char str_int[INT_MAX_PLACES];
+        int str_len = sprintf(str_int, "%d", numeros_cartela[numeros_counter]);
+
+        for (int j = 0; j < str_len; j++) { 
+            nums[j + i] = str_int[j]; 
+        } 
+        
+        i += str_len;
+        nums[i] = DEFAULT_SPLIT_CHAR;
+
+        numeros_counter++;
+    }
 
     Cartela crtl;
     crtl.ativo = 1;
@@ -327,6 +332,42 @@ bool salvar_cartela_participante(Participante prt, int *numeros_cartela) {
 
     prt.cartela = crtl;
     return atualizar_participante(prt);
+}
+
+void pegar_numeros_cartela_participante(Participante prt, int* array) {
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    int numeros_contador = 0;
+    int str_length = 0;
+    char str_numero[INT_MAX_PLACES]; 
+
+    for (int i = 0; i < MAX_NUMEROS_POR_CARTELA; i++) {
+        if (prt.cartela.numeros[i] == DEFAULT_SPLIT_CHAR) { 
+            array[numeros_contador] = atoi(str_numero);
+            str_length = 0;
+            numeros_contador++;
+
+            if (numeros_contador == config.numeros_catela)
+                break;
+
+        } else { 
+            str_numero[str_length] = prt.cartela.numeros[i];
+            str_length++;
+        }
+       
+    }
+}
+
+void mostrar_cartela(Participante participante) {
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    printf("\n[ ");
+
+    int numeros_cartela[config.numeros_catela];
+    pegar_numeros_cartela_participante(participante, numeros_cartela);
+
+    for (int i = 0; i < config.numeros_catela; i++)
+        printf("%d ", numeros_cartela[i]);
+
+    printf("]\n\n");
 }
 
 #endif /* utilitarios_h */

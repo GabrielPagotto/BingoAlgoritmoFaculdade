@@ -284,7 +284,7 @@ Rota cartela_participante_tela() {
     } else { 
         cad_title = "EDITAR CARTELA";
         opc1_message = "Editar cartela";
-        mostrar_cartela(prtcpt.cartela);
+        mostrar_cartela(prtcpt);
     }
 
     exibir_opcao(1, opc1_message); 
