@@ -13,6 +13,7 @@ typedef enum {
     ROTA_LISTAR_PARTICIPANTE = 1,
     ROTA_LISTAR_PREMIOS = 2,
     ROTA_CONFIGURACOES = 3,
+    ROTA_BINGO = 4,
     ROTA_FINALIZAR = 999,
     ROTA_CARTELA_PARTICIPANTE = 500,
     ROTA_CADASTRAR_PREMIO = 501,
@@ -56,6 +57,11 @@ Rota rota_ctl(Rota proxima_rota) {
 
     case ROTA_CARTELA_PARTICIPANTE:
         sw = cartela_participante_tela();
+        break;
+
+    case ROTA_BINGO:
+        sw = rodar_bingo_tela();
+        break;
     
     default:
         sw = menu_tela();

@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h> 
 #include <string.h>
 #include <stdbool.h>
 #include <sys/types.h>
@@ -89,6 +90,10 @@ char *pegar_linha(char *msg)
 
     linha[i] = '\0';
     return linha;
+}
+
+void clear() { 
+    system(CLEAR_KEY);
 }
 
 int pegar_int(char *msg) {
@@ -216,45 +221,6 @@ void criar_pastas_necessarias() {
     mkdir(RESULTADOS_FOLDER_NAME, S_IRWXU);
 }
 
-bool alterar_configuracoes_bingo(BingoConfiguracao config) { 
-    FILE *arqv;
-    arqv = fopen(BINGO_CONFIG_ARQV, "w");
-
-    if (arqv == NULL)
-        return false;
-
-    fwrite(&config, sizeof(config), 1, arqv);
-    
-    if (*fwrite != 0) {
-        fclose(arqv);
-        return true;
-    } else {
-        fclose(arqv);
-        return false;
-    }
-}
-
-BingoConfiguracao pegar_configuracoes_bingo() {
-    BingoConfiguracao config = {1, 60, 6};
-    FILE *arqv;
-    arqv = fopen(BINGO_CONFIG_ARQV, "rb+");
-
-    if (arqv == NULL) {
-        alterar_configuracoes_bingo(config);
-        return config;
-    }
-
-    fread(&config, sizeof(config), 1, arqv);
-    return config;
-}
-
-void mostrar_configuracoes_bingo() {
-    BingoConfiguracao config = pegar_configuracoes_bingo();
-    printf("Intervalo dos números da cartela: %d até %d.\n", config.intervalo_inicio, config.intervalo_final);
-    printf("Quantidade de números por catela: %d\n\n", config.numeros_catela);
-}
-
-
 Participante pegar_participante_por_codigo(int participante_codigo) {
     int array_size;
     Participante *participantes;
@@ -304,6 +270,71 @@ bool atualizar_participante(Participante participante) {
     }
 }
 
+bool alterar_configuracoes_bingo(BingoConfiguracao config) { 
+    FILE *arqv;
+    arqv = fopen(BINGO_CONFIG_ARQV, "w");
+
+    if (arqv == NULL)
+        return false;
+
+    fwrite(&config, sizeof(config), 1, arqv);
+
+    int array_size_participantes;
+    Participante *todos_participantes;
+    todos_participantes = pegar_todos_participantes(&array_size_participantes);
+
+    for (int i = 0; i < array_size_participantes; i++) { 
+        todos_participantes[i].cartela.ativo = 0;
+        strcpy(todos_participantes[i].cartela.numeros, "");
+        atualizar_participante(todos_participantes[i]);
+    }
+    
+    if (*fwrite != 0) {
+        fclose(arqv);
+        return true;
+    } else {
+        fclose(arqv);
+        return false;
+    }
+}
+
+BingoConfiguracao pegar_configuracoes_bingo() {
+    BingoConfiguracao config = {1, 60, 6};
+    FILE *arqv;
+    arqv = fopen(BINGO_CONFIG_ARQV, "rb+");
+
+    if (arqv == NULL) {
+        alterar_configuracoes_bingo(config);
+        return config;
+    }
+
+    fread(&config, sizeof(config), 1, arqv);
+    return config;
+}
+
+void pegar_numeros_cartela_participante(Participante prt, int* array) {
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    int numeros_contador = 0;
+    int str_length = 0;
+    char str_numero[INT_MAX_PLACES]; 
+
+    for (int i = 0; i < MAX_NUMEROS_POR_CARTELA; i++) {
+        if (prt.cartela.numeros[i] == DEFAULT_SPLIT_CHAR) { 
+            array[numeros_contador] = atoi(str_numero);
+            str_length = 0;
+            numeros_contador++;
+
+            if (numeros_contador == config.numeros_catela)
+                break;
+
+        } else { 
+            str_numero[str_length] = prt.cartela.numeros[i];
+            str_length++;
+        }
+       
+    }
+}
+
 bool salvar_cartela_participante(Participante prt, int *numeros_cartela) {
     BingoConfiguracao config = pegar_configuracoes_bingo();
     char nums[MAX_NUMEROS_POR_CARTELA];
@@ -334,27 +365,10 @@ bool salvar_cartela_participante(Participante prt, int *numeros_cartela) {
     return atualizar_participante(prt);
 }
 
-void pegar_numeros_cartela_participante(Participante prt, int* array) {
+void mostrar_configuracoes_bingo() {
     BingoConfiguracao config = pegar_configuracoes_bingo();
-    int numeros_contador = 0;
-    int str_length = 0;
-    char str_numero[INT_MAX_PLACES]; 
-
-    for (int i = 0; i < MAX_NUMEROS_POR_CARTELA; i++) {
-        if (prt.cartela.numeros[i] == DEFAULT_SPLIT_CHAR) { 
-            array[numeros_contador] = atoi(str_numero);
-            str_length = 0;
-            numeros_contador++;
-
-            if (numeros_contador == config.numeros_catela)
-                break;
-
-        } else { 
-            str_numero[str_length] = prt.cartela.numeros[i];
-            str_length++;
-        }
-       
-    }
+    printf("Intervalo dos números da cartela: %d até %d.\n", config.intervalo_inicio, config.intervalo_final);
+    printf("Quantidade de números por catela: %d\n\n", config.numeros_catela);
 }
 
 void mostrar_cartela(Participante participante) {
@@ -368,6 +382,22 @@ void mostrar_cartela(Participante participante) {
         printf("%d ", numeros_cartela[i]);
 
     printf("]\n\n");
+}
+
+int get_numero_random(int min_num, int max_num) {
+    int resultado = 0, menor = 0, maior = 0;
+
+    if (min_num < max_num) {
+        menor = min_num;
+        maior = max_num + 1;
+    } else {
+        menor = max_num + 1;
+        maior = min_num;
+    }
+
+    srand(time(NULL));
+    resultado = (rand() % (maior - menor)) + menor;
+    return resultado;
 }
 
 #endif /* utilitarios_h */

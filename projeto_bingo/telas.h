@@ -17,6 +17,7 @@ Rota menu_tela() {
     exibir_opcao(ROTA_LISTAR_PARTICIPANTE, "Participantes");
     exibir_opcao(ROTA_LISTAR_PREMIOS, "Prêmios");
     exibir_opcao(ROTA_CONFIGURACOES, "Configurações" );
+    exibir_opcao(ROTA_BINGO, "Rodar Bingo" );
     
     printf("\n");
 
@@ -227,6 +228,8 @@ Rota alterar_configuracoes_tela() {
     BingoConfiguracao config;
     exibir_cabecalho("ALTERAR CONFIGURAÇÕES");
 
+    printf("Ao alterar as configurações do bingo, todos os participantes terão suas cartelas resetadas.\n\n");
+
     config.intervalo_inicio = pegar_int("Intervalo inicial de números: ");
     config.intervalo_final = pegar_int("Intervalo final de números: ");
 
@@ -356,6 +359,168 @@ Rota cartela_participante_tela() {
             
         return ROTA_MENU;
     }
+}
+
+Rota rodar_bingo_tela() {
+    exibir_cabecalho("RODAR BINGO");
+    
+    exibir_opcao(1, "Começar bingo");
+    exibir_opcao(2, "Voltar para o menu");
+    char opc = pegar_opc_selecionada();
+
+    if (opc != 1)
+        return ROTA_MENU;
+
+    int
+        array_size_participantes,
+        array_size_premios,
+        num_sorteados_count = 0,
+        pc_sorteados_count = 0;
+    
+    Participante *todos_participantes = pegar_todos_participantes(&array_size_participantes);
+    Premio *todos_premios = pegar_todos_premios(&array_size_premios);
+    BingoConfiguracao config = pegar_configuracoes_bingo();
+    int nums_sorteados[config.intervalo_final - config.intervalo_inicio];
+
+    Participante participantes_sorteados[array_size_premios];
+
+
+    if (array_size_participantes < array_size_premios) {
+        mostrar_mensagem("Para rodar o bingo, o número de participantes deve ser igual ou maior que o números de prêmios");
+        return ROTA_MENU;
+    }
+
+    Participante *participantes_cartela_vazia = malloc(sizeof(Participante) * array_size_participantes);
+    int participantes_cartela_vazia_count = 0;
+    
+    for (int i = 0; i < array_size_participantes; i++) {
+        if (todos_participantes[i].cartela.ativo == 0) {
+            participantes_cartela_vazia[participantes_cartela_vazia_count] = todos_participantes[i];
+            participantes_cartela_vazia_count++;
+        }
+    }
+
+    if (participantes_cartela_vazia_count > 0) { 
+        for (int i = 0; i < participantes_cartela_vazia_count; i++)
+            mostrar_participante(participantes_cartela_vazia[i]);
+        
+        free(participantes_cartela_vazia);
+        printf("\n");
+        mostrar_mensagem("Os participantes listados acima não possuem uma cartela cadastrada"); 
+        return ROTA_MENU;
+    }
+
+    free(participantes_cartela_vazia);
+    bool completed = false, getted_results = false;
+
+    while (!completed) {
+        clear();
+        exibir_cabecalho("RODAR BINGO");
+
+        printf("Números sorteados: [ ");
+        for (int i = 0; i < num_sorteados_count; i++)
+            printf("%d ", nums_sorteados[i]);
+        printf("]\n");
+        
+        printf("Participantes ganhadores: %d\n", pc_sorteados_count);
+        printf("Participantes restantes: %d\n", array_size_participantes - pc_sorteados_count);
+        printf("Prêmios restantes: %d\n", array_size_premios - pc_sorteados_count);
+
+        if (pc_sorteados_count > 0) { 
+            printf("Participantes premiados:\n");
+            for (int i = 0; i < pc_sorteados_count; i++)
+                printf("    %d - %s %s ganhou o prêmio %s\n",
+                    i + 1,
+                    participantes_sorteados[i].nome,
+                    participantes_sorteados[i].sobrenome,
+                    todos_premios[i].desricao); 
+        }
+
+        if (getted_results) {
+            completed = true;
+            continue;
+        }
+
+        if (pc_sorteados_count == array_size_premios) {
+            getted_results = true;
+            continue;
+        }
+        
+        bool contains_n = false;
+        int random_n;
+        
+        printf("\n\n");
+        printf("Sorteando número, aguarde...");
+        do {
+            random_n = get_numero_random(config.intervalo_inicio, config.intervalo_final); 
+
+            for (int i = 0; i < num_sorteados_count; i++) { 
+                if (nums_sorteados[i] == random_n) { 
+                    contains_n = true;
+                    break;
+                } else if (contains_n) { 
+                    contains_n = false;
+                }
+            }
+
+        } while (contains_n);
+
+        printf("\r                                           \n");
+        printf("O número %d foi sorteado nesta rodada. O que deseja fazer?\n", random_n);
+        exibir_opcao(1, "Adiciona número aos sorteados");
+        exibir_opcao(2, "Sortear novamente");
+
+        char opc_sel = pegar_opc_selecionada();
+
+        if (opc_sel != 1)
+            continue;
+
+        nums_sorteados[num_sorteados_count] = random_n;
+        num_sorteados_count++;
+
+        for (int i = 0; i < array_size_participantes; i++) {
+            bool contains_part = false;
+
+            for (int j = 0; j < pc_sorteados_count; j++) {
+                if (participantes_sorteados[j].codigo == todos_participantes[i].codigo) { 
+                    contains_part = true;
+                    break;
+                }
+            }
+
+            if (contains_part)
+                continue;
+
+            int numeros_cartela[config.numeros_catela];
+            int num_acertos = 0;
+            pegar_numeros_cartela_participante(todos_participantes[i], numeros_cartela); 
+
+            for (int j = 0; j < config.numeros_catela; j++)
+                for (int k = 0; k < num_sorteados_count; k++)
+                    if (numeros_cartela[j] == nums_sorteados[k])
+                        num_acertos++;
+            
+            if (num_acertos == config.numeros_catela) {
+                participantes_sorteados[pc_sorteados_count] = todos_participantes[i];
+                pc_sorteados_count++;
+            }    
+        }
+
+    };
+    
+    printf("\n\nBingo concluído com sucesso...\n");
+    exibir_opcao(1, "Salvar resultados e voltar ao menu");
+    exibir_opcao(2, "Resetar bingo");
+
+    char opc_fim = pegar_opc_selecionada();
+
+    if (opc_fim == 1) {
+        // TODO: implementar salvamento de resultados.
+    } else if (opc_fim == 2) {
+        return ROTA_BINGO;
+    }
+
+    return ROTA_MENU;
 }
     
 #endif /* telas_h */
