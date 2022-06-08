@@ -14,17 +14,19 @@
 #define INT_MAX_PLACES 6
 
 /* Pastas que serão necessárias para a execução do sistema */  
-#define DATA_FOLDER_NAME "data"
-#define DATA_PARTICIPANTES_FOLDER_NAME "data/participantes"
-#define RESULTADOS_FOLDER_NAME "resultados"
+#define BINGO_FOLDER "BINGO"
+#define DATA_FOLDER_NAME "BINGO/data"
+#define DATA_PARTICIPANTES_FOLDER_NAME "BINGO/data/participantes"
+#define RESULTADOS_FOLDER_NAME "BINGO/resultados"
 
 /* Locais que serão usados para guardar dados */
-#define PARTICIPANTES_ARQV "data/participantes.txt"
-#define PREMIOS_ARQV "data/premios.txt"
-#define BINGO_CONFIG_ARQV "data/config.txt"
+#define PARTICIPANTES_ARQV "BINGO/data/participantes.txt"
+#define PREMIOS_ARQV "BINGO/data/premios.txt"
+#define BINGO_CONFIG_ARQV "BINGO/data/config.txt"
 
 /* Locais que são usados para guardar dados de resultados. */
-#define LOGS_ARQV "resultados/historico.txt"
+#define LOGS_ARQV "BINGO/resultados/historico.txt"
+#define RESULTS_ARQV "BINGO/resultados/resultado.txt"
 
 /* Constantes sobre o sistema operacional */ 
 

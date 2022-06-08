@@ -8,7 +8,7 @@
 #include "projeto_bingo/sistema.h"
 #include "projeto_bingo/rotas.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     rodar_sistema();
     return 0;
 }

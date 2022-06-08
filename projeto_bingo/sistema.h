@@ -26,7 +26,6 @@ void rotear() {
 }
 
 void rodar_sistema() {
-    setvbuf(stdout, NULL, _IONBF, 0);
     setlocale(LC_ALL, "Portuguese_Brasil");
     criar_pastas_necessarias();
     rotear();

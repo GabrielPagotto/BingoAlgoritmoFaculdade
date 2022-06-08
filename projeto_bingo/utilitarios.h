@@ -42,7 +42,50 @@ char pegar_opc_selecionada() {
 }
 
 void salvar_log(char *log) {
+    FILE *arqv;
+    arqv = fopen(LOGS_ARQV, "a");
+
+    if (arqv == NULL) 
+        return;
     
+    fprintf(arqv, "%s\n", log);
+    fclose(arqv);
+}
+
+void limpar_logs() { 
+    FILE *arqv;
+    arqv = fopen(LOGS_ARQV, "w");
+
+    if (arqv == NULL) 
+        return;
+    
+    fprintf(arqv, "");
+    fclose(arqv);
+}
+
+void salvar_log_numero_sorteado(int num) { 
+    FILE *arqv;
+    arqv = fopen(LOGS_ARQV, "a");
+
+    if (arqv == NULL) 
+        return;
+    
+    fprintf(arqv, "Número %d foi sorteado\n", num);
+    fclose(arqv);
+}
+
+void salvar_log_participante_ganhador(Participante participante, Premio premio) { 
+    FILE *arqv;
+    arqv = fopen(LOGS_ARQV, "a");
+
+    if (arqv == NULL) 
+        return;
+    
+    fprintf(arqv, "O participante %s %s ganhador o prêmio %s\n",
+        participante.nome,
+        participante.sobrenome,
+        premio.desricao);
+    fclose(arqv);
 }
 
 void divisor() { 
@@ -70,7 +113,6 @@ char *pegar_linha(char *msg)
         printf(ERRO_ALOCACAO_MEMORIA);
         exit(EXIT_FAILURE);
     }
-
     printf("%s", msg);
     fflush(stdout);
 
@@ -217,6 +259,7 @@ bool adicionar_premio(Premio premio) {
 }
 
 void criar_pastas_necessarias() { 
+    mkdir(BINGO_FOLDER, S_IRWXU);
     mkdir(DATA_FOLDER_NAME, S_IRWXU);
     mkdir(RESULTADOS_FOLDER_NAME, S_IRWXU);
 }
@@ -318,6 +361,9 @@ void pegar_numeros_cartela_participante(Participante prt, int* array) {
     int str_length = 0;
     char str_numero[INT_MAX_PLACES]; 
 
+    if (strlen(prt.cartela.numeros) <= 1)
+        return;
+
     for (int i = 0; i < MAX_NUMEROS_POR_CARTELA; i++) {
         if (prt.cartela.numeros[i] == DEFAULT_SPLIT_CHAR) { 
             array[numeros_contador] = atoi(str_numero);
@@ -331,7 +377,6 @@ void pegar_numeros_cartela_participante(Participante prt, int* array) {
             str_numero[str_length] = prt.cartela.numeros[i];
             str_length++;
         }
-       
     }
 }
 
@@ -398,6 +443,21 @@ int get_numero_random(int min_num, int max_num) {
     srand(time(NULL));
     resultado = (rand() % (maior - menor)) + menor;
     return resultado;
+}
+
+void escrever_resultado(int position, Participante part, Premio premio) {
+    FILE *arqv;
+    arqv = fopen(RESULTS_ARQV, "a");
+
+    if (arqv == NULL) 
+        return;
+    
+    fprintf(arqv, "%s %s foi o ganhador %d e ganhou o prêmio %s\n",
+        part.nome,
+        part.sobrenome,
+        position,
+        premio.desricao);
+    fclose(arqv);
 }
 
 #endif /* utilitarios_h */
